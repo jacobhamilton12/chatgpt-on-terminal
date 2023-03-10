@@ -1,8 +1,9 @@
 import openai
+import os
 
-# Set up OpenAI API key
-api_key = "YOUR_API_KEY"
-openai.api_key = api_key
+# Get the value of an environment variable
+openai.api_key = os.environ.get('OPENAI_KEY')
+
 
 # Function to send a message to the OpenAI chatbot model and return its response
 def send_message(message_log):
