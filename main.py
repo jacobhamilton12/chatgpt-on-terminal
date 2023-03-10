@@ -1,3 +1,4 @@
+import datetime
 import openai
 import os
 
@@ -24,6 +25,11 @@ def send_message(message_log):
     # If no response with text is found, return the first response's content (which may be empty)
     return response.choices[0].message.content
 
+def log(message_log):
+    now = datetime.datetime.now()
+    nowstr = now.strftime("%Y-%m-%d %H:%M:%S")
+    with open("log.txt", "a") as f:
+        f.write(f"Chat ended: {nowstr}\n{str(message_log)}\n\n\n")
 
 # Main function that runs the chatbot
 def main():
@@ -56,9 +62,10 @@ def main():
             user_input = input("You: ")
 
             # If the user types "quit", end the loop and print a goodbye message
-            if user_input.lower() == "quit":
+            if user_input.lower() in ["quit", "q"]:
                 print("Goodbye!")
-                break
+                log(message_log)
+                return
 
             message_log.append({"role": "user", "content": user_input})
 
