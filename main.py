@@ -28,7 +28,7 @@ def send_message(message_log):
 def log(message_log):
     now = datetime.datetime.now()
     nowstr = now.strftime("%Y-%m-%d %H:%M:%S")
-    with open("log.txt", "a") as f:
+    with open("/data/data/com.termux/files/home/chatgpt-on-termux/log.txt", "a") as f:
         f.write(f"Chat ended: {nowstr}\n{str(message_log)}\n\n\n")
 
 # Main function that runs the chatbot
