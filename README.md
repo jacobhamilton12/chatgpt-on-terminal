@@ -4,9 +4,9 @@ This is a simple chatbot that uses OpenAI's GPT-3.5-turbo language model to gene
 
 ## Installation
 ### Can be installed on most Linux terminal and also Termux on android
-1. Clone the repository: `https://github.com/jacobhamilton12/chatgpt-on-termux.git`
+1. Clone the repository: `https://github.com/jacobhamilton12/chatgpt-on-terminal.git`
 2. Install the required packages: `pip install -r requirements.txt`
-> **Note:** If you have trouble installing dependencies on termux, read this https://github.com/termux/termux-packages/issues/13803
+> **Note:** This also works on termux on Android. If you have trouble installing dependencies on termux, read this https://github.com/termux/termux-packages/issues/13803
 
 3. Set up an OpenAI API key by following the instructions [here](https://platform.openai.com/account/api-keys)
 4. Add your API key as an environment variable `export OPENAI_KEY=<Your key here>`. Add this line to `$PREFIX/etc/bash.bashrc` to have it persist. Be sure to source after editing: `source $PREFIX/etc/bash.bashrc`
