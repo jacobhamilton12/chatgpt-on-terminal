@@ -1,18 +1,27 @@
 import datetime
 import openai
 import os
+import sys
+import json
 
 # Get the value of an environment variable
 openai.api_key = os.environ.get('OPENAI_KEY')
 
+MAX_TOKENS = 4000
+MIN_TOKENS = 1000
 
 # Function to send a message to the OpenAI chatbot model and return its response
 def send_message(message_log):
+    jstring = json.dumps(message_log)
+    while MAX_TOKENS - len(jstring) < MIN_TOKENS:
+        # don't pop first which is the system prompt
+        message_log.pop(1)
+        jstring = json.dumps(message_log)
     # Use OpenAI's ChatCompletion API to get the chatbot's response
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",  # The name of the OpenAI chatbot model to use
         messages=message_log,   # The conversation history up to this point, as a list of dictionaries
-        max_tokens=3800,        # The maximum number of tokens (words or subwords) in the generated response
+        max_tokens=4000-len(jstring),        # The maximum number of tokens (words or subwords) in the generated response
         stop=None,              # The stopping sequence for the generated response, if any (not used here)
         temperature=0.7,        # The "creativity" of the generated response (higher temperature = more creative)
     )
@@ -31,11 +40,27 @@ def log(message_log):
     with open("/data/data/com.termux/files/home/chatgpt-on-termux/log.txt", "a") as f:
         f.write(f"Chat ended: {nowstr}\n{str(message_log)}\n\n\n")
 
+def get_prompt(key):
+    # Open the JSON file
+    with open('promptbook.json') as file:
+        # Load the contents of the file into a dictionary
+        data = json.load(file)
+    
+    # Get the prompt for the given key
+    prompt = data[key]
+
+    return prompt
+
 # Main function that runs the chatbot
 def main():
+    key = "Default"
+    if len(sys.argv) > 1:
+        key = sys.argv[1]
+        print(f"key: {key}")
+    prompt = get_prompt(key)
     # Initialize the conversation history with a message from the chatbot
     message_log = [
-        {"role": "system", "content": "You are a helpful assistant."}
+        {"role": "system", "content": prompt}
     ]
 
     # Set a flag to keep track of whether this is the first request in the conversation
