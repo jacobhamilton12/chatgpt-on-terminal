@@ -23,6 +23,8 @@ To start the chatbot, run `main.py` using Python 3:
 
 The chatbot will prompt you to enter your input, and then it will generate a response using the GPT-3 model. The conversation history is stored in a list of dictionaries called `message_log`.
 
+### Promptbook
+
 You can store system prompts in promptbook.json and select the prompt like so:
 ```python main.py "Default"```
 replace Default with whatever key you made.
