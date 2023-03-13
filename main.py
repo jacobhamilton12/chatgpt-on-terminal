@@ -38,7 +38,7 @@ def send_message(message_log):
 def exit_log():
     now = datetime.datetime.now()
     nowstr = now.strftime("%Y-%m-%d %H:%M:%S")
-    with open("/data/data/com.termux/files/home/chatgpt-on-termux/log.txt", "a") as f:
+    with open("~/chatgpt-on-termux/log.txt", "a") as f:
         f.write(f"Chat ended: {nowstr}\n{str(message_log)}\n\n\n")
 
 def get_system_prompt(key):
