@@ -113,7 +113,9 @@ if len(sys.argv) > 1:
 prompt = get_system_prompt(key)
 
 # Initialize the conversation history with a message from the chatbot                                
-message_log = [                                          {"role": "system", "content": prompt}            ]
+message_log = [
+    {"role": "system", "content": prompt}  
+]
 
 # Call the main function if this file is executed directly (not imported as a module)
 if __name__ == "__main__":
