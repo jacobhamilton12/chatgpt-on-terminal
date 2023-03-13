@@ -19,11 +19,11 @@ To start the chatbot, run `main.py` using Python 3:
 
     python main.py
 
-> **Note:** I've also added this as an alias to my bashrc `alias chat="python ~/chatgpt-on-termux/main.py"`
+> **Note:** I've also added this as an alias to my bashrc `alias chat="python ~/chatgpt-on-terminal/main.py"`
 
 The chatbot will prompt you to enter your input, and then it will generate a response using the GPT-3 model. The conversation history is stored in a list of dictionaries called `message_log`.
 
-To end the chatbot, type "quit" at any time.
+To end the chatbot, type "q" at any time. Or ctrl+c
 
 ## License
 
