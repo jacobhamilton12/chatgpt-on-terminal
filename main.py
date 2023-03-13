@@ -3,6 +3,7 @@ import openai
 import os
 import sys
 import json
+import signal
 
 # Get the value of an environment variable
 openai.api_key = os.environ.get('OPENAI_KEY')
@@ -21,7 +22,7 @@ def send_message(message_log):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",  # The name of the OpenAI chatbot model to use
         messages=message_log,   # The conversation history up to this point, as a list of dictionaries
-        max_tokens=4000-len(jstring),        # The maximum number of tokens (words or subwords) in the generated response
+        max_tokens=MAX_TOKENS-len(jstring),        # The maximum number of tokens (words or subwords) in the generated response
         stop=None,              # The stopping sequence for the generated response, if any (not used here)
         temperature=0.7,        # The "creativity" of the generated response (higher temperature = more creative)
     )
@@ -34,13 +35,15 @@ def send_message(message_log):
     # If no response with text is found, return the first response's content (which may be empty)
     return response.choices[0].message.content
 
-def log(message_log):
+def exit_log():
     now = datetime.datetime.now()
     nowstr = now.strftime("%Y-%m-%d %H:%M:%S")
     with open("/data/data/com.termux/files/home/chatgpt-on-termux/log.txt", "a") as f:
         f.write(f"Chat ended: {nowstr}\n{str(message_log)}\n\n\n")
 
-def get_prompt(key):
+def get_system_prompt(key):
+    if not os.path.exists('promptbook.json'):
+        return "You are a helpful assistant"
     # Open the JSON file
     with open('promptbook.json') as file:
         # Load the contents of the file into a dictionary
@@ -51,18 +54,14 @@ def get_prompt(key):
 
     return prompt
 
+def signal_handler(sig, frame):
+    print('sigint detected')
+    exit_log()
+    exit(0)
+
 # Main function that runs the chatbot
 def main():
-    key = "Default"
-    if len(sys.argv) > 1:
-        key = sys.argv[1]
-        print(f"key: {key}")
-    prompt = get_prompt(key)
-    # Initialize the conversation history with a message from the chatbot
-    message_log = [
-        {"role": "system", "content": prompt}
-    ]
-
+    global message_log
     # Set a flag to keep track of whether this is the first request in the conversation
     first_request = True
 
@@ -89,7 +88,7 @@ def main():
             # If the user types "quit", end the loop and print a goodbye message
             if user_input.lower() in ["quit", "q"]:
                 print("Goodbye!")
-                log(message_log)
+                exit_log()
                 return
 
             message_log.append({"role": "user", "content": user_input})
@@ -101,6 +100,16 @@ def main():
             message_log.append({"role": "assistant", "content": response})
             print(f"AI assistant: {response}")
 
+signal.signal(signal.SIGINT, signal_handler)
+
+key = "Default"
+if len(sys.argv) > 1:
+    key = sys.argv[1]
+    print(f"key: {key}")
+prompt = get_system_prompt(key)
+
+# Initialize the conversation history with a message from the chatbot                                
+message_log = [                                          {"role": "system", "content": prompt}            ]
 
 # Call the main function if this file is executed directly (not imported as a module)
 if __name__ == "__main__":
