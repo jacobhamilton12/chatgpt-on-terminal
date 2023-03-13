@@ -59,46 +59,50 @@ def signal_handler(sig, frame):
     exit_log()
     exit(0)
 
+def read_multiline_string(esc):
+    print(f"You (esc={esc}): ", end="")
+    lines = []
+    while True:
+        line = input()
+        if line == esc:
+            break
+        lines.append(line)
+    multiline_string = '\n'.join(lines)
+    return multiline_string
+
+def read_normal():
+    return input("You: ")
+
 # Main function that runs the chatbot
 def main():
     global message_log
-    # Set a flag to keep track of whether this is the first request in the conversation
-    first_request = True
-
+    mode = input("Multiline mode? y/n ")
+    reader = read_normal
+    if mode == "y":
+        esc = input("Enter escape sequence: ")
+        print(f"Enter {esc} on an empty line to end a sequence, enter by itself to end chat")
+        reader = lambda: read_multiline_string(esc)
+    else:
+        print("Enter q to exit")
+        
     # Start a loop that runs until the user types "quit"
     while True:
-        if first_request:
-            # If this is the first request, get the user's input and add it to the conversation history
-            user_input = input("You: ")
-            message_log.append({"role": "user", "content": user_input})
+        user_input = reader()
 
-            # Send the conversation history to the chatbot and get its response
-            response = send_message(message_log)
+        # If the user types "quit", end the loop and print a goodbye message
+        if user_input.lower() in ["quit", "q", ""]:
+            print("Goodbye!")
+            exit_log()
+            return
 
-            # Add the chatbot's response to the conversation history and print it to the console
-            message_log.append({"role": "assistant", "content": response})
-            print(f"AI assistant: {response}")
+        message_log.append({"role": "user", "content": user_input})
 
-            # Set the flag to False so that this branch is not executed again
-            first_request = False
-        else:
-            # If this is not the first request, get the user's input and add it to the conversation history
-            user_input = input("You: ")
+        # Send the conversation history to the chatbot and get its response
+        response = send_message(message_log)
 
-            # If the user types "quit", end the loop and print a goodbye message
-            if user_input.lower() in ["quit", "q"]:
-                print("Goodbye!")
-                exit_log()
-                return
-
-            message_log.append({"role": "user", "content": user_input})
-
-            # Send the conversation history to the chatbot and get its response
-            response = send_message(message_log)
-
-            # Add the chatbot's response to the conversation history and print it to the console
-            message_log.append({"role": "assistant", "content": response})
-            print(f"AI assistant: {response}")
+        # Add the chatbot's response to the conversation history and print it to the console
+        message_log.append({"role": "assistant", "content": response})
+        print(f"AI assistant: {response}")
 
 signal.signal(signal.SIGINT, signal_handler)
 
