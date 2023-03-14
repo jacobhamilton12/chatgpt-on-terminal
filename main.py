@@ -9,20 +9,26 @@ import signal
 openai.api_key = os.environ.get('OPENAI_KEY')
 
 MAX_TOKENS = 4000
-MIN_TOKENS = 1000
+MIN_TOKENS = 200
+
+def token_count(message_log):
+    count = 0
+    for entry in message_log:
+        count += len(entry["content"]) // 4 # 1 token is roughly 4 characters in english
+    return count
 
 # Function to send a message to the OpenAI chatbot model and return its response
 def send_message(message_log):
-    jstring = json.dumps(message_log)
-    while MAX_TOKENS - len(jstring) < MIN_TOKENS:
+    leftover_tokens =  MAX_TOKENS - token_count(message_log)
+    while leftover_tokens < MIN_TOKENS:
         # don't pop first which is the system prompt
         message_log.pop(1)
-        jstring = json.dumps(message_log)
+        leftover_tokens =  MAX_TOKENS - token_count(message_log)
     # Use OpenAI's ChatCompletion API to get the chatbot's response
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",  # The name of the OpenAI chatbot model to use
         messages=message_log,   # The conversation history up to this point, as a list of dictionaries
-        max_tokens=MAX_TOKENS-len(jstring),        # The maximum number of tokens (words or subwords) in the generated response
+        max_tokens=MAX_TOKENS-leftover_tokens + 97,        # The maximum number of tokens (words or subwords) in the generated response
         stop=None,              # The stopping sequence for the generated response, if any (not used here)
         temperature=0.7,        # The "creativity" of the generated response (higher temperature = more creative)
     )
