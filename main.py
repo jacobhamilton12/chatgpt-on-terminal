@@ -39,7 +39,7 @@ def exit_log():
     home_dir = os.path.expanduser("~")
     now = datetime.datetime.now()
     nowstr = now.strftime("%Y-%m-%d %H:%M:%S")
-    with open(f"{home_dir}/chatgpt-on-termux/log.txt", "a") as f:
+    with open(f"{home_dir}/chatgpt-on-terminal/log.txt", "a") as f:
         f.write(f"Chat ended: {nowstr}\n{str(message_log)}\n\n\n")
 
 def get_system_prompt(key):
