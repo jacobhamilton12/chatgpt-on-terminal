@@ -28,7 +28,7 @@ def send_message(message_log):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",  # The name of the OpenAI chatbot model to use
         messages=message_log,   # The conversation history up to this point, as a list of dictionaries
-        max_tokens=MAX_TOKENS-leftover_tokens + 97,        # The maximum number of tokens (words or subwords) in the generated response
+        max_tokens=leftover_tokens + 95,        # The maximum number of tokens (words or subwords) in the generated response
         stop=None,              # The stopping sequence for the generated response, if any (not used here)
         temperature=0.7,        # The "creativity" of the generated response (higher temperature = more creative)
     )
